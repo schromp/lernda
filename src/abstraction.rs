@@ -7,6 +7,28 @@ pub struct Abstraction {
 
 impl LTTerm for Abstraction {
     fn free_variable(&self) -> Vec<&str> {
-        todo!()
+        match self.body.as_ref() {
+            Term::Variable(v) => {
+                if v.name() == self.var_name {
+                    vec![v.name()]
+                } else {
+                    vec![]
+                }
+            }
+            Term::Abstraction(a) => {
+                let mut rec_vars = a.free_variable();
+                if let Some(pos) = rec_vars.iter().position(|x| x == &self.var_name) {
+                    rec_vars.remove(pos);
+                }
+                rec_vars
+            }
+            Term::Application(a) => {
+                let mut rec_vars = a.free_variable();
+                if let Some(pos) = rec_vars.iter().position(|x| x == &self.var_name) {
+                    rec_vars.remove(pos);
+                }
+                rec_vars
+            }
+        }
     }
 }
