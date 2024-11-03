@@ -1,16 +1,17 @@
-use term::Term;
-
-mod term;
+use lernda::term::Term;
+use lernda::{abs, app, var};
 
 fn main() {
     let x = var!("x");
+    println!("{:?}", x);
+
+    let abs = abs!("x", x);
+    println!("{:?}", abs);
+
     let y = var!("y");
-    let a = var!("a");
-    let b = var!("b");
+    let app = app!(abs, y);
+    println!("{:?}", app);
 
-    let flip = abs!("x", abs!("y", app!(y, x)));
-
-    let apply_flip = app!(app!(flip, a), b);
-
-    println!("{:?}", apply_flip.free_variables());
+    app.replace("y", &var!("z"));
+    println!("{:?}", app);
 }

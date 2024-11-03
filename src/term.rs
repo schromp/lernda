@@ -1,3 +1,4 @@
+#[derive(Clone, Debug)]
 pub enum Term {
     Abstraction {
         var_name: String,
@@ -31,6 +32,44 @@ impl Term {
             }
             Term::Variable { name } => {
                 vec![name]
+            }
+        }
+    }
+
+    pub fn replace(&self, var_to_replace: &str, term: &Term) -> Box<Term> {
+        match self {
+            Term::Abstraction { var_name, body } => {
+                let new_var_name = match term {
+                    Term::Variable { name } => {
+                        if name != var_name && var_name == var_to_replace {
+                            name
+                        } else {
+                            var_name
+                        }
+                    }
+                    _ => var_name,
+                };
+
+                Box::new(Self::Abstraction {
+                    var_name: new_var_name.to_string(),
+                    body: body.replace(var_to_replace, term),
+                })
+            }
+            Term::Application { l_term, r_term } => {
+                let l = l_term.replace(var_to_replace, term);
+                let r = r_term.replace(var_to_replace, term);
+
+                Box::new(Self::Application {
+                    l_term: l,
+                    r_term: r,
+                })
+            }
+            Term::Variable { name } => {
+                if name == var_to_replace {
+                    Box::new(term.clone())
+                } else {
+                    Box::new(self.clone())
+                }
             }
         }
     }
