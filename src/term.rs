@@ -35,3 +35,35 @@ impl Term {
         }
     }
 }
+
+// Macro for creating an Abstraction
+#[macro_export]
+macro_rules! abs {
+    ($var_name:expr, $body:expr) => {
+        Term::Abstraction {
+            var_name: $var_name.to_string(),
+            body: Box::new($body),
+        }
+    };
+}
+
+// Macro for creating an Application
+#[macro_export]
+macro_rules! app {
+    ($l_term:expr, $r_term:expr) => {
+        Term::Application {
+            l_term: Box::new($l_term),
+            r_term: Box::new($r_term),
+        }
+    };
+}
+
+// Macro for creating a Variable
+#[macro_export]
+macro_rules! var {
+    ($name:expr) => {
+        Term::Variable {
+            name: $name.to_string(),
+        }
+    };
+}

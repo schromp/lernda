@@ -3,21 +3,14 @@ use term::Term;
 mod term;
 
 fn main() {
-    let x = Term::Variable {
-        name: "x".to_string(),
-    };
-    let abs = Term::Abstraction {
-        var_name: "y".to_string(),
-        body: Box::new(Term::Variable {
-            name: "y".to_string(),
-        }),
-    };
+    let x = var!("x");
+    let y = var!("y");
+    let a = var!("a");
+    let b = var!("b");
 
-    let application = Term::Application {
-        l_term: Box::new(abs),
-        r_term: Box::new(x),
-    };
+    let flip = abs!("x", abs!("y", app!(y, x)));
 
-    let vars = application.free_variables();
-    println!("{:?}", vars);
+    let apply_flip = app!(app!(flip, a), b);
+
+    println!("{:?}", apply_flip.free_variables());
 }
