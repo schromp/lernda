@@ -52,11 +52,7 @@ fn test_reduce_flip() {
     let flip = abs!("x", abs!("y", app!(y, x)));
     let apply_flip = app!(app!(flip, var!("a")), var!("b"));
 
-    println!("{}", apply_flip);
-
     let first = apply_flip.reduce();
-    println!("{}", first);
 
-    assert_eq!("(y x)", first.reduce().to_string())
-
+    assert_eq!("(b a)", first.reduce().to_string())
 }

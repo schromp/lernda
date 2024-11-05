@@ -46,13 +46,17 @@ impl Term {
                     _ => a.var_name(),
                 };
 
-                // FIX: i think alpha conversion should be used here
-                // This should return the replaced AND trunkated version
-                a.body().replace(var_to_replace, term)
-                // Term::Abstraction(Abstraction::new(
-                //     new_var_name.to_string(),
-                //     Box::new(a.body().replace(var_to_replace, term)),
-                // ))
+                // FIX: i think alpha conversion should be used here in the case free variables
+                // would be overwritten
+
+                if a.var_name() == var_to_replace {
+                    a.body().replace(var_to_replace, term)
+                } else {
+                    Term::Abstraction(Abstraction::new(
+                        a.var_name().to_string(),
+                        Box::new(a.body().replace(var_to_replace, term)),
+                    ))
+                }
             }
             Term::Application(a) => {
                 let l = a.l_term().replace(var_to_replace, term);
@@ -87,9 +91,9 @@ impl Term {
             Term::Abstraction(_) => self.clone(),
             Term::Application(a) => {
                 if a.l_term().is_reducible() {
-                    return a.l_term().reduce();
+                    return Term::Application(Application::new(Box::new(a.l_term().reduce()), Box::new(a.r_term().clone())));
                 } else if a.r_term().is_reducible() {
-                    return a.r_term().reduce();
+                    return Term::Application(Application::new(Box::new(a.l_term().clone()), Box::new(a.r_term().reduce())));
                 } else if let Term::Abstraction(abs) = a.l_term() {
                     if !a.r_term().is_reducible() {
                         Term::replace(a.l_term(), abs.var_name(), a.r_term())
