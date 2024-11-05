@@ -16,16 +16,13 @@ fn test_free_variables() {
 }
 
 #[test]
-fn test_replace() {
+fn test_replace_abstraction() {
     let x = var!("x");
     let y = var!("y");
-    let a = var!("a");
-    let b = var!("b");
 
     let flip = abs!("x", abs!("y", app!(y, x)));
 
-    // let apply_flip = app!(app!(flip, a), b);
+    let res = flip.replace("x", &var!["h"]);
 
-    flip.replace("x", &var!["h"]);
-    println!("{:?}", flip);
+    // assert_eq!(res, abs!(""))
 }

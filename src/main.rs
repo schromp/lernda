@@ -3,15 +3,12 @@ use lernda::{abs, app, var};
 
 fn main() {
     let x = var!("x");
-    println!("{:?}", x);
-
-    let abs = abs!("x", x);
-    println!("{:?}", abs);
-
     let y = var!("y");
-    let app = app!(abs, y);
-    println!("{:?}", app);
 
-    app.replace("y", &var!("z"));
-    println!("{:?}", app);
+    let flip = abs!("x", abs!("y", app!(y, x)));
+
+    let res = flip.replace("x", &var!["h"]);
+
+    let res = flip.replace("y", &var!("z"));
+    println!("{}", res);
 }

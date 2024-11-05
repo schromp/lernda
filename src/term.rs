@@ -1,3 +1,5 @@
+use core::fmt;
+
 #[derive(Clone, Debug)]
 pub enum Term {
     Abstraction {
@@ -36,7 +38,7 @@ impl Term {
         }
     }
 
-    pub fn replace(&self, var_to_replace: &str, term: &Term) -> Box<Term> {
+    pub fn replace(&self, var_to_replace: &str, term: &Term) -> Term {
         match self {
             Term::Abstraction { var_name, body } => {
                 let new_var_name = match term {
@@ -50,26 +52,65 @@ impl Term {
                     _ => var_name,
                 };
 
-                Box::new(Self::Abstraction {
+                Self::Abstraction {
                     var_name: new_var_name.to_string(),
-                    body: body.replace(var_to_replace, term),
-                })
+                    // FIX: i think alpha conversion should be used here
+                    body: Box::new(body.replace(var_to_replace, term)),
+                }
             }
             Term::Application { l_term, r_term } => {
                 let l = l_term.replace(var_to_replace, term);
                 let r = r_term.replace(var_to_replace, term);
 
-                Box::new(Self::Application {
-                    l_term: l,
-                    r_term: r,
-                })
+                Self::Application {
+                    l_term: Box::new(l),
+                    r_term: Box::new(r),
+                }
             }
             Term::Variable { name } => {
                 if name == var_to_replace {
-                    Box::new(term.clone())
+                    term.clone()
                 } else {
-                    Box::new(self.clone())
+                    self.clone()
                 }
+            }
+        }
+    }
+
+    fn is_reducible(&self) -> bool {
+        match self {
+            Term::Abstraction { .. } => false,
+            Term::Application { l_term, r_term } => {
+                l_term.is_reducible()
+                    || r_term.is_reducible()
+                    || matches!(l_term.as_ref(), Term::Abstraction { .. })
+            }
+            Term::Variable { .. } => false,
+        }
+    }
+
+    // fn reduce(&self) -> Option<Term> {
+    //     match self {
+    //         Term::Abstraction { var_name, body } => todo!(),
+    //         Term::Application { l_term, r_term } => todo!(),
+    //         Term::Variable { name } => None,
+    //     };
+    //
+    //     todo!()
+    // }
+}
+
+impl fmt::Display for Term {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Term::Abstraction { var_name, body } => {
+                write!(f, "({}: {})", var_name, body)
+            }
+            Term::Application { l_term, r_term } => {
+                write!(f, "({} {})", l_term, r_term)
+            }
+            Term::Variable { name } => {
+                write!(f, "{}", name)
             }
         }
     }
