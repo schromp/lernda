@@ -88,7 +88,7 @@ impl fmt::Display for Term {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Term::CoreTerm(core_term) => {
-                todo!()
+                write!(f, "{}", core_term)
             }
             Term::BuiltinTerms => todo!(),
         }
