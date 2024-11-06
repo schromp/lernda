@@ -7,8 +7,8 @@ fn main() {
 
     let flip = abs!("x", abs!("y", app!(y, x)));
 
-    let res = flip.replace("x", &var!["h"]);
-
-    let res = flip.replace("y", &var!("z"));
-    println!("{}", res);
+    // let res = flip.replace("x", &var!["h"]);
+    //
+    // let res = flip.replace("y", &var!("z"));
+    // println!("{}", res);
 }
