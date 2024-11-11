@@ -67,9 +67,9 @@ fn test_reduce_simple() {
     let abs = abs!("x", x);
     let app = app!(abs, y);
 
-    let result = app.reduce();
+    app.reduce();
 
-    // assert_eq!("y", &result.to_string())
+    assert_eq!("y", &app.to_string())
 }
 
 #[test]

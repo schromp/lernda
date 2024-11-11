@@ -18,12 +18,12 @@ pub enum CoreTerm {
 }
 
 impl CoreTerm {
-    pub fn reduce(self) {
+    pub fn reduce(self) -> Self {
         match self {
-            CoreTerm::Abstraction { .. } => {}
+            CoreTerm::Abstraction { .. } => self,
             CoreTerm::Application { mut l_term, r_term } => {
                 if l_term.is_reducible() {
-                    l_term.reduce();
+                    return l_term.reduce()
                 } else if r_term.is_reducible() {
                     r_term.reduce();
                 } else if let Term::CoreTerm(CoreTerm::Abstraction {
@@ -37,7 +37,7 @@ impl CoreTerm {
                     }
                 }
             }
-            CoreTerm::Variable { .. } => {}
+            CoreTerm::Variable { .. } => self,
         }
     }
 }

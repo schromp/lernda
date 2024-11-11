@@ -1,11 +1,11 @@
 use core::fmt;
 
-use crate::core_terms::CoreTerm;
+use crate::{builtin_terms::BuiltinTerms, core_terms::CoreTerm};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Term {
     CoreTerm(CoreTerm),
-    BuiltinTerms,
+    BuiltinTerms(BuiltinTerms),
 }
 
 impl Term {
@@ -76,10 +76,11 @@ impl Term {
         }
     }
 
-    pub fn reduce(self) {
+    // FIX: this either has to return itself or just operate on &self
+    pub fn reduce(self) -> Self {
         match self {
             Term::CoreTerm(a) => a.reduce(),
-            Term::BuiltinTerms => todo!("Cant reduce builtin terms"),
+            Term::BuiltinTerms(_) => todo!("Cant reduce builtin terms"),
         }
     }
 }
@@ -90,8 +91,7 @@ impl fmt::Display for Term {
             Term::CoreTerm(core_term) => {
                 write!(f, "{}", core_term)
             }
-            Term::BuiltinTerms => todo!(),
+            Term::BuiltinTerms(_) => todo!(),
         }
     }
 }
-
